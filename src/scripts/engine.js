@@ -4,18 +4,30 @@ const state = {
         enemy: document.querySelector(".enemy"),
         timeLeft: document.querySelector("#time-left"),
         score: document.querySelector("#score"),
+        lives: document.querySelector("#lives")
     },
     values: {
         gameVelocity: 2000,
         hitPosition: 0,
         result: 0,
         currentTime: 120, // 2:00
+        lives: 3,
     },
     actions: {
         timerId: setInterval(randomSquare, 1000),
         countDownTimerId: setInterval(countDown, 1000),
     },
 };
+
+function gameOver() {
+    clearInterval(state.actions.countDownTimerId);
+    clearInterval(state.actions.timerId);
+     setTimeout(() => {
+            alert("Game Over, Voce perdeu todas as suas vidas! O seu resultado foi: " + state.values.result);
+            window.location.reload();
+        }, 100);
+}
+
 
 function countDown() {
     state.values.currentTime--;
@@ -65,6 +77,15 @@ function addListenerHitBox() {
                 state.view.score.textContent = state.values.result;
                 state.values.hitPosition = null;
                 playSound("hit");
+            }
+            else {
+                state.values.lives--;
+                state.view.lives.textContent = "x" + state.values.lives;
+
+                // Se as vidas acabarem
+                if (state.values.lives <= 0) {
+                    gameOver();
+                }
             }
         });
     });
